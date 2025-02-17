@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.trading_app.Entity.TwoFactorOTP;
 import com.example.trading_app.Entity.User;
-
+import com.example.trading_app.Utils.OtpUtils;
 import com.example.trading_app.config.JwtProvider;
 import com.example.trading_app.repository.UserRepository;
 import com.example.trading_app.response.AuthResponse;
 import com.example.trading_app.service.CustomUserDetailsService;
+import com.example.trading_app.service.TwoFactorOtpService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,6 +31,8 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthController {
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private TwoFactorOtpService twoFactorOtpService;
 	@Autowired
     private JwtProvider jwtProvider;
 	@Autowired
@@ -68,6 +72,22 @@ public class AuthController {
 		Authentication auth = authenticate(userName,password);
 		SecurityContextHolder.getContext().setAuthentication(auth);
 		String jwt=JwtProvider.generateToken(auth);
+		User authUser = userRepository.findByEmail(userName)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+		if(user.getTwoFactorAuth().isEnabled()) {
+			AuthResponse authResponse=new AuthResponse();
+			authResponse.setMessage("Two Factor auth is Enabled");
+			authResponse.setTwoFactorAuthEnable(true);
+			String otp=OtpUtils.generateOTP();
+			TwoFactorOTP oldTwoFactorOtp=twoFactorOtpService.findByUserId(authUser.getId());
+			//Optional.ofNullable(oldTwoFactorOtp).ifPresent(twoFactorOtpService::deleteTwoFactorOtp);
+			if(oldTwoFactorOtp!=null) {
+				twoFactorOtpService.deleteTwoFactorOtp(oldTwoFactorOtp);
+			}
+			TwoFactorOTP newTwoFactorOTP =twoFactorOtpService.createTwoFactorOtp(authUser, otp, jwt);
+			authResponse.setSession(newTwoFactorOTP.getId());
+			return new ResponseEntity<>(authResponse,HttpStatus.ACCEPTED);
+		}
 		AuthResponse authResponse=new AuthResponse();
 		authResponse.setJwt(jwt);
 		authResponse.setStatus(true);
