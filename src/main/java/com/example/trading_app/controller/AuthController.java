@@ -10,9 +10,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.trading_app.Entity.TwoFactorOTP;
@@ -22,6 +24,10 @@ import com.example.trading_app.config.JwtProvider;
 import com.example.trading_app.repository.UserRepository;
 import com.example.trading_app.response.AuthResponse;
 import com.example.trading_app.service.CustomUserDetailsService;
+<<<<<<< HEAD
+=======
+import com.example.trading_app.service.EmailServiceImp;
+>>>>>>> 6b623dd (Implemented E-mail Service)
 import com.example.trading_app.service.TwoFactorOtpService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +41,10 @@ public class AuthController {
 	private TwoFactorOtpService twoFactorOtpService;
 	@Autowired
     private JwtProvider jwtProvider;
+	@Autowired
+	private TwoFactorOtpService twoFactorOtpService;
+	@Autowired
+	private EmailServiceImp emailServiceImp;
 	@Autowired
 	private CustomUserDetailsService customUserDetailsService;
 	@PostMapping("/signup")
@@ -76,6 +86,7 @@ public class AuthController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 		if(user.getTwoFactorAuth().isEnabled()) {
 			AuthResponse authResponse=new AuthResponse();
+<<<<<<< HEAD
 			authResponse.setMessage("Two Factor auth is Enabled");
 			authResponse.setTwoFactorAuthEnable(true);
 			String otp=OtpUtils.generateOTP();
@@ -87,6 +98,20 @@ public class AuthController {
 			TwoFactorOTP newTwoFactorOTP =twoFactorOtpService.createTwoFactorOtp(authUser, otp, jwt);
 			authResponse.setSession(newTwoFactorOTP.getId());
 			return new ResponseEntity<>(authResponse,HttpStatus.ACCEPTED);
+=======
+			authResponse.setMessage("Two factor auth is enabled");
+			authResponse.setTwoFactorAuthEnable(true);
+			String otp=OtpUtils.generateOtp();
+			TwoFactorOTP oldTwoFactorOtp =twoFactorOtpService.findByUser(authUser.getId());
+			if(oldTwoFactorOtp!=null) {
+				twoFactorOtpService.deleteTwoFactorOtp(oldTwoFactorOtp);
+			}
+			TwoFactorOTP newTwoFactorOtp=twoFactorOtpService.createTwoFactorOtp(authUser, otp, jwt);
+			emailServiceImp.sendVerificationOtpEmail(userName, otp);
+			authResponse.setSession(newTwoFactorOtp.getId());
+			return new ResponseEntity<>(authResponse,HttpStatus.ACCEPTED);
+			
+>>>>>>> 6b623dd (Implemented E-mail Service)
 		}
 		AuthResponse authResponse=new AuthResponse();
 		authResponse.setJwt(jwt);
@@ -104,6 +129,19 @@ public class AuthController {
 		}
 		return new UsernamePasswordAuthenticationToken(userDetails,password,userDetails.getAuthorities());
 		
+	}
+	public ResponseEntity<AuthResponse>verifySignInOtp(
+			@PathVariable String otp,
+			@RequestParam String id) throws Exception{
+		TwoFactorOTP twoFactorOTP=twoFactorOtpService.findById(id);
+		if(twoFactorOtpService.verifyTwoFactorOtp(twoFactorOTP, otp)) {
+			AuthResponse authResponse=new AuthResponse();
+			authResponse.setMessage("Two factor authentication verified");
+			authResponse.setTwoFactorAuthEnable(true);
+			authResponse.setJwt(twoFactorOTP.getJwt());
+			return new ResponseEntity<>(authResponse,HttpStatus.OK);				
+		}
+		throw new Exception("Invalid OTP!!");
 	}
 
 }

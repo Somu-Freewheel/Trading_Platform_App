@@ -12,6 +12,7 @@ import com.example.trading_app.repository.TwoFactorOtpRepository;
 public class TwoFactorOtpServiceImpl implements TwoFactorOtpService{
 	@Autowired
 	private TwoFactorOtpRepository twoFactorOtpRepository;
+<<<<<<< HEAD
 	
 	@Override
 	public TwoFactorOTP createTwoFactorOtp(User user,String otp,String jwt) {
@@ -29,12 +30,36 @@ public class TwoFactorOtpServiceImpl implements TwoFactorOtpService{
 	public TwoFactorOTP findByUserId(Long userId) {
 		
 		return null;
+=======
+
+	@Override
+	public TwoFactorOTP createTwoFactorOtp(User user, String otp, String jwt) {
+		UUID uuid=UUID.randomUUID();
+		String id=uuid.toString();
+		TwoFactorOTP twoFactorOTP=new TwoFactorOTP();
+		twoFactorOTP.setOtp(otp);
+		twoFactorOTP.setJwt(jwt);
+		twoFactorOTP.setId(id);
+		twoFactorOTP.setUser(user);
+		return twoFactorOtpRepository.save(twoFactorOTP);
+	}
+
+	@Override
+	public TwoFactorOTP findByUser(Long userId) {
+		
+		return twoFactorOtpRepository.findByUserId(userId);
+>>>>>>> 6b623dd (Implemented E-mail Service)
 	}
 
 	@Override
 	public TwoFactorOTP findById(String id) {
+<<<<<<< HEAD
 		Optional<TwoFactorOTP>optUserId=twoFactorOtpRepository.findById(id);
 		return optUserId.orElse(null);	
+=======
+		Optional<TwoFactorOTP>optId=twoFactorOtpRepository.findById(id);
+		return optId.orElse(null);
+>>>>>>> 6b623dd (Implemented E-mail Service)
 	}
 
 	@Override
@@ -48,5 +73,9 @@ public class TwoFactorOtpServiceImpl implements TwoFactorOtpService{
 		twoFactorOtpRepository.delete(twoFactorOtp);
 		
 	}
+<<<<<<< HEAD
+=======
+	
+>>>>>>> 6b623dd (Implemented E-mail Service)
 
 }
