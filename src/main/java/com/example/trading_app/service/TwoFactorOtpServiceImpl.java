@@ -4,11 +4,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.example.trading_app.Entity.TwoFactorOTP;
 import com.example.trading_app.Entity.User;
 import com.example.trading_app.repository.TwoFactorOtpRepository;
-
+@Service
 public class TwoFactorOtpServiceImpl implements TwoFactorOtpService{
 	@Autowired
 	private TwoFactorOtpRepository twoFactorOtpRepository;	

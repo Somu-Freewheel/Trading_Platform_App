@@ -1,4 +1,4 @@
-package com.example.trading_app.Utils;
+ package com.example.trading_app.Utils;
 
 import java.util.Random;
 
