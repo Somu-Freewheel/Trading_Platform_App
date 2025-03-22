@@ -2,6 +2,7 @@ package com.example.trading_app.service;
 import com.example.trading_app.Entity.Order;
 import com.example.trading_app.Entity.User;
 import com.example.trading_app.Entity.Wallet;
+import com.example.trading_app.domain.OrderType;
 import com.example.trading_app.repository.WalletServiceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,17 @@ public class WalletServiceImpl implements WalletService{
     @Override
     public Wallet payOrderPayment(Order order, User user) {
         Wallet wallet = getUserWallet(user);
-
-        return null;
+        if(order.getOrderType().equals(OrderType.BUY)){
+            BigDecimal newBalance = wallet.getBalance().subtract(order.getPrice());
+            if(newBalance.compareTo(order.getPrice())<0){
+                throw new RuntimeException("Insufficient funds for this transaction");
+            }
+            wallet.setBalance(newBalance);
+        }else{
+            BigDecimal newBalance = wallet.getBalance().subtract(order.getPrice());
+            wallet.setBalance(newBalance);
+        }
+        walletServiceRepository.save(wallet);
+        return wallet;
     }
 }

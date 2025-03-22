@@ -13,6 +13,9 @@ public class OrderItem {
 
     private double quantity;
 
+    @ManyToOne
+    private Cryptocurrency coin;
+
     private double buyPrice;
 
     private double sellPrice;
