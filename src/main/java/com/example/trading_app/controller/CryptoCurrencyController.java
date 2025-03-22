@@ -66,9 +66,6 @@ public class CryptoCurrencyController {
 		JsonNode jsonNode =objectMapper.readTree(coinDetails);
 		return  ResponseEntity.ok(jsonNode);
 	}
-	
-	
-	
-	
+
 
 }
