@@ -1,9 +1,6 @@
 package com.example.trading_app.service;
 
-import com.example.trading_app.Entity.Cryptocurrency;
-import com.example.trading_app.Entity.Order;
-import com.example.trading_app.Entity.OrderItem;
-import com.example.trading_app.Entity.User;
+import com.example.trading_app.Entity.*;
 import com.example.trading_app.domain.OrderStatus;
 import com.example.trading_app.domain.OrderType;
 import com.example.trading_app.repository.OrderItemRepository;
@@ -26,6 +23,9 @@ public class OrderServiceImpl implements OrderService{
     @Autowired
     private WalletService walletService;
 
+    @Autowired
+    private AssetService assetService;
+
     @Override
     public Order createOrder(User user, OrderItem orderItem, OrderType orderType) {
         double price = orderItem.getCoin().getCurrentPrice()*orderItem.getQuantity();
@@ -40,8 +40,8 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public Order getOrderId(Long orderId) throws Exception {
-        return orderRepository.findById(orderId).orElseThrow(()->new Exception("order not found"));
+    public Order getOrderId(Long orderId) {
+        return orderRepository.findById(orderId).orElseThrow(()->new RuntimeException("order not found"));
     }
 
     @Override
