@@ -9,6 +9,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -24,7 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 //Here we are implementing the business logic for CryptoCurrency 
 //We are using Coin Gecko API . 
 //We are integrating the Coin Gecko API 
-
+@Service
 public class CryptoCurrencyServiceImpl implements CryptoCurrencyService{
 	@Autowired
 	private CryptoCurrencyRepository cryptoCurrencyRepository;
