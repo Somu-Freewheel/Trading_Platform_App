@@ -1,6 +1,6 @@
 package com.example.trading_app.domain;
 
-public enum WithdrawlStatus {
+public enum WithdrawalStatus {
     PENDING,
     SUCCESS,
     DECLINE

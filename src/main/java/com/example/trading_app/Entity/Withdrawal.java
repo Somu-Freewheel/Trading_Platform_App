@@ -1,6 +1,6 @@
 package com.example.trading_app.Entity;
 
-import com.example.trading_app.domain.WithdrawlStatus;
+import com.example.trading_app.domain.WithdrawalStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -8,12 +8,12 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-public class Withdrawl {
+public class Withdrawal {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private WithdrawlStatus status;
+    private WithdrawalStatus status;
 
     private Long amount;
 
