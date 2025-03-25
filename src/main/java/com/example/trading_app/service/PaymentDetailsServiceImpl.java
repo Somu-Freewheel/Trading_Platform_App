@@ -13,11 +13,18 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService{
 
     @Override
     public PaymentDetails addPaymentDetails(String accountNumber, String accountHolderName, String ifsc, String bankName, User user) {
-        return null;
+        PaymentDetails paymentDetails = new PaymentDetails();
+        paymentDetails.setAccountNumber(accountNumber);
+        paymentDetails.setAccountHolderName(accountHolderName);
+        paymentDetails.setIfscCode(ifsc);
+        paymentDetails.setBankName(bankName);
+        paymentDetails.setUser(user);
+        return paymentDetailsRepository.save(paymentDetails);
     }
 
     @Override
     public PaymentDetails getUserPaymentDetails(User user) {
-        return null;
+        return paymentDetailsRepository.findByUserId(user.getId());
+
     }
 }

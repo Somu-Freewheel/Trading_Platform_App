@@ -10,4 +10,5 @@ public interface PaymentDetailsService {
                                             String bankName,
                                             User user);
     public PaymentDetails getUserPaymentDetails(User user);
+
 }
