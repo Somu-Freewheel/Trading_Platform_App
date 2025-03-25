@@ -9,6 +9,7 @@ import com.razorpay.Payment;
 import com.razorpay.PaymentLink;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
+import com.stripe.Stripe;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -103,9 +104,11 @@ public class PaymentServiceImpl implements PaymentService{
             throw new RuntimeException(e);
         }
     }
-
+    //To Implement Stripe Payment functionality
     @Override
     public PaymentResponse createStripePaymentUrl(User user, Long amount, String orderId) {
+        Stripe.apiKey = stripeSecretKey;
+
         return null;
     }
 }
