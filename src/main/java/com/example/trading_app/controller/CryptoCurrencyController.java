@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.trading_app.Entity.Cryptocurrency;
 import com.example.trading_app.service.CryptoCurrencyService;
@@ -17,14 +14,22 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Controller
+@RestController
 @RequestMapping("/coins")
 public class CryptoCurrencyController {
-	@Autowired
-	private CryptoCurrencyService cryptoCurrencyService;
+
+
+	private final CryptoCurrencyService cryptoCurrencyService;
+
 	@Autowired 
 	private ObjectMapper objectMapper;
-	@GetMapping
+
+	@Autowired
+    public CryptoCurrencyController(CryptoCurrencyService cryptoCurrencyService) {
+        this.cryptoCurrencyService = cryptoCurrencyService;
+    }
+
+    @GetMapping
 	ResponseEntity<List<Cryptocurrency>>getCoinList(@RequestParam("page")int page)throws Exception{
 		List<Cryptocurrency> coins = cryptoCurrencyService.getCoinList(page);
 		return new ResponseEntity<>(coins,HttpStatus.ACCEPTED);
