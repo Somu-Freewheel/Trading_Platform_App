@@ -1,6 +1,8 @@
 package com.example.trading_app.controller;
 import java.util.Optional;
 import java.util.UUID;
+
+import com.example.trading_app.service.EmailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +23,6 @@ import com.example.trading_app.Utils.OtpUtils;
 import com.example.trading_app.domain.VerificationType;
 import com.example.trading_app.response.ApiResponse;
 import com.example.trading_app.response.AuthResponse;
-import com.example.trading_app.service.EmailServiceImp;
 import com.example.trading_app.service.ForgotPasswordService;
 import com.example.trading_app.service.UserService;
 import com.example.trading_app.service.VerificationCodeService;
@@ -32,7 +33,7 @@ public class UserController {
 	private UserService userService;
 	private VerificationCodeService verificationCodeService;
 	@Autowired
-	private EmailServiceImp emailServiceImp;
+	private EmailServiceImpl emailServiceImp;
 	@Autowired 
 	private ForgotPasswordService forgotPasswordService;
 	@GetMapping("/api/users/profile")
