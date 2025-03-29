@@ -14,6 +14,18 @@ services:
     networks:
       - trading-network
 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin-container
+    restart: always
+    environment:
+      PMA_HOST: mysql-db
+      MYSQL_ROOT_PASSWORD: user123
+    ports:
+      - "8081:80"
+    networks:
+      - trading-network
+
   trading-app:
     build:
       context: .
