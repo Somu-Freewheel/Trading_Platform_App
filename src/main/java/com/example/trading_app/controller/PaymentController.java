@@ -37,5 +37,4 @@ public class PaymentController {
         }
         return new ResponseEntity<>(paymentResponse, HttpStatus.CREATED);
     }
-
 }
