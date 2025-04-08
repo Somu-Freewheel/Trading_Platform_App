@@ -10,6 +10,9 @@ import com.razorpay.PaymentLink;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
+import com.stripe.model.checkout.Session;
+import com.stripe.param.checkout.SessionCreateParams;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -106,9 +109,33 @@ public class PaymentServiceImpl implements PaymentService{
     }
     //To Implement Stripe Payment functionality
     @Override
-    public PaymentResponse createStripePaymentUrl(User user, Long amount, String orderId) {
+    public PaymentResponse createStripePaymentUrl(User user, Long amount, String orderId) throws StripeException {
         Stripe.apiKey = stripeSecretKey;
-
-        return null;
+        SessionCreateParams params = SessionCreateParams.builder()
+                .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .setSuccessUrl("http://localhost:5173/wallet?order_id="+orderId)
+                .setCancelUrl("http://localhost:5173/payment/cancel")
+                .addLineItem(SessionCreateParams.LineItem.builder()
+                        .setQuantity(1L)
+                        .setPriceData(
+                                SessionCreateParams.LineItem.PriceData.builder()
+                                        .setCurrency("usd")
+                                        .setUnitAmount(amount*100)
+                                        .setProductData(SessionCreateParams
+                                                .LineItem
+                                                .PriceData
+                                                .ProductData
+                                                .builder()
+                                                .setName("Top up wallet")
+                                                .build())
+                                        .build())
+                        .build())
+                .build();
+        Session session = Session.create(params);
+        System.out.println("session ____"+ session);
+        PaymentResponse paymentResponse =new PaymentResponse();
+        paymentResponse.setPaymentUrl(session.getUrl());
+        return paymentResponse;
     }
 }
