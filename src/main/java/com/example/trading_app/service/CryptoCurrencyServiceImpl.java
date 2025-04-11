@@ -1,6 +1,5 @@
 package com.example.trading_app.service;
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +20,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 //Here we are implementing the business logic for CryptoCurrency 
 //We are using Coin Gecko API . 
 //We are integrating the Coin Gecko

@@ -42,9 +42,21 @@ services:
       - "8080:8080"
     networks:
       - trading-network
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    restart: unless-stopped
+    ports:
+      - "8082:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock #so jenkins can use docker
+    user: root #Required to access docker.sock
 
 volumes:
   mysql-data:
+  jenkins_home:
 
 networks:
   trading-network:
