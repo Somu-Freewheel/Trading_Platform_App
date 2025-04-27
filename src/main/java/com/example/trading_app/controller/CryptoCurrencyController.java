@@ -17,19 +17,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RestController
 @RequestMapping("/coins")
 public class CryptoCurrencyController {
-
-
-	private final CryptoCurrencyService cryptoCurrencyService;
-
+	@Autowired
+	private CryptoCurrencyService cryptoCurrencyService;
 	@Autowired 
 	private ObjectMapper objectMapper;
-
-	@Autowired
-    public CryptoCurrencyController(CryptoCurrencyService cryptoCurrencyService) {
-        this.cryptoCurrencyService = cryptoCurrencyService;
-    }
-
-    @GetMapping
+	@GetMapping
 	ResponseEntity<List<Cryptocurrency>>getCoinList(@RequestParam("page")int page)throws Exception{
 		List<Cryptocurrency> coins = cryptoCurrencyService.getCoinList(page);
 		return new ResponseEntity<>(coins,HttpStatus.ACCEPTED);
@@ -71,6 +63,9 @@ public class CryptoCurrencyController {
 		JsonNode jsonNode =objectMapper.readTree(coinDetails);
 		return  ResponseEntity.ok(jsonNode);
 	}
-
+	
+	
+	
+	
 
 }
