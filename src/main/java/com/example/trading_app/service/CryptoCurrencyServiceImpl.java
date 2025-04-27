@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 //Here we are implementing the business logic for CryptoCurrency 
 //We are using Coin Gecko API . 
 //We are integrating the Coin Gecko API 
-
+@Service
 public class CryptoCurrencyServiceImpl implements CryptoCurrencyService{
 	@Autowired
 	private CryptoCurrencyRepository cryptoCurrencyRepository;
