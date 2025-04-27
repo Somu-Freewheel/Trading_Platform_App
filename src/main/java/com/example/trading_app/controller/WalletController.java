@@ -4,6 +4,7 @@ import com.example.trading_app.Entity.User;
 import com.example.trading_app.Entity.Wallet;
 import com.example.trading_app.Entity.WalletTransaction;
 import com.example.trading_app.service.OrderService;
+import com.example.trading_app.service.PaymentService;
 import com.example.trading_app.service.UserService;
 import com.example.trading_app.service.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,8 @@ public class WalletController {
     private UserService userService;
     @Autowired
     private OrderService orderService;
-
+    @Autowired
+    private PaymentService paymentService;
     @GetMapping("")
     public ResponseEntity<Wallet>getUserWallet(@RequestHeader("Authorization")String jwt){
         User user = userService.findUserProfileByJwt(jwt);
