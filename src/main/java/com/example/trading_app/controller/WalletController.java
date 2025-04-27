@@ -48,7 +48,6 @@ public class WalletController {
         Order order = orderService.getOrderId(orderId);
         Wallet wallet =walletService.payOrderPayment(order,user);
         return new ResponseEntity<>( wallet, HttpStatus.ACCEPTED);
-
     }
 
 }

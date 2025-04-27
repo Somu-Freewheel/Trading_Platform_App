@@ -1,6 +1,7 @@
 package com.example.trading_app.controller;
-import java.util.Objects;
 import java.util.Optional;
+
+import com.example.trading_app.service.EmailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +22,7 @@ import com.example.trading_app.config.JwtProvider;
 import com.example.trading_app.repository.UserRepository;
 import com.example.trading_app.response.AuthResponse;
 import com.example.trading_app.service.CustomUserDetailsService;
-import com.example.trading_app.service.EmailServiceImp;
 import com.example.trading_app.service.TwoFactorOtpService;
-
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/auth")
@@ -37,7 +35,7 @@ public class AuthController {
 	@Autowired
 	private TwoFactorOtpService twoFactorOtpService;
 	@Autowired
-	private EmailServiceImp emailServiceImp;
+	private EmailServiceImpl emailServiceImp;
 	@Autowired
 	private CustomUserDetailsService customUserDetailsService;
 	@PostMapping("/signup")

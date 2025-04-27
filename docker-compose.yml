@@ -1,0 +1,52 @@
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: user123
+      MYSQL_DATABASE: trading_app
+      MYSQL_PASSWORD: user123
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - trading-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin-container
+    restart: always
+    environment:
+      PMA_HOST: mysql-db
+      MYSQL_ROOT_PASSWORD: user123
+    ports:
+      - "8081:80"
+    networks:
+      - trading-network
+
+  trading-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: trading-api
+    restart: always
+    depends_on:
+      - mysql-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/trading_app
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: user123
+    ports:
+      - "8080:8080"
+    networks:
+      - trading-network
+
+volumes:
+  mysql-data:
+
+networks:
+  trading-network:
+
+
