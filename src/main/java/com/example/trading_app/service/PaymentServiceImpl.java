@@ -20,8 +20,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PaymentServiceImpl implements PaymentService{
+    private final PaymentOrderRepository paymentOrderRepository;
     @Autowired
-    private PaymentOrderRepository paymentOrderRepository;
+    public PaymentServiceImpl(PaymentOrderRepository paymentOrderRepository) {
+        this.paymentOrderRepository = paymentOrderRepository;
+    }
     @Value("${stripe.api.key}")
     private String stripeSecretKey;
     @Value("${razorpay.api.key}")

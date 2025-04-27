@@ -5,9 +5,10 @@ import com.example.trading_app.Entity.User;
 import com.example.trading_app.Entity.WatchList;
 import com.example.trading_app.repository.WatchListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
+@Service
 public class WatchListServiceImpl implements WatchListService{
     @Autowired
     private WatchListRepository watchListRepository;

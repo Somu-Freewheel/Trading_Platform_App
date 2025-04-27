@@ -31,6 +31,9 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService{
 	private CryptoCurrencyRepository cryptoCurrencyRepository;
 	@Autowired
 	private ObjectMapper objectMapper;
+	public CryptoCurrencyServiceImpl() {
+		System.out.println("CryptoCurrencyServiceImpl Bean Created ✅");
+	}
 
 	@Override
 	public List<Cryptocurrency> getCoinList(int page) {
