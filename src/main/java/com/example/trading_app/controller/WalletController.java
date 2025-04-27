@@ -8,6 +8,7 @@ import com.example.trading_app.service.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -58,7 +59,6 @@ public class WalletController {
         Wallet wallet = walletService.getUserWallet(user);
         PaymentOrder order = paymentService.getPaymentOrderById(orderId);
         Boolean paymentStatus = paymentService.ProceedPaymentOrder(order,paymentId);
-
         if(paymentStatus){
             wallet = walletService.addBalance(wallet,order.getAmount());
         }
