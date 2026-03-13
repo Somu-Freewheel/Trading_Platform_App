@@ -127,7 +127,7 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService{
 	@Override
 	public String searchCoin(String keyword) {
 		// TODO Auto-generated method stub
-		String url ="https://api.coingecko.com/api/v3/coins/="+keyword;
+		String url ="https://api.coingecko.com/api/v3/search?query="+keyword;
 		RestTemplate restTemplate = new RestTemplate();
 		try {
 			HttpHeaders headers= new HttpHeaders();
