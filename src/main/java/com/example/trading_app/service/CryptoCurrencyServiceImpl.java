@@ -182,7 +182,8 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService{
 	@Override
 	public String getTradingCoins() {
 		// TODO Auto-generated method stub
-		String url ="https://api.coingecko.com/api/v3/search/trading";
+		String url = UriComponentsBuilder.fromHttpUrl("https://api.coingecko.com/api/v3/search/trending")
+				.toUriString();
 		RestTemplate restTemplate = new RestTemplate();
 		try {
 			HttpHeaders headers= new HttpHeaders();
