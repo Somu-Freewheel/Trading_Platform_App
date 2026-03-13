@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.example.trading_app.Entity.Cryptocurrency;
 import com.example.trading_app.repository.CryptoCurrencyRepository;
@@ -38,7 +39,11 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService{
 	@Override
 	public List<Cryptocurrency> getCoinList(int page) {
 		// TODO Auto-generated method stub
-		String url ="https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=10&page="+page;
+		String url = UriComponentsBuilder.fromHttpUrl("https://api.coingecko.com/api/v3/coins/markets")
+				.queryParam("vs_currency", "usd")
+				.queryParam("per_page", "10")
+				.queryParam("page", page)
+				.toUriString();
 		RestTemplate restTemplate = new RestTemplate();
 		try {
 			HttpHeaders headers= new HttpHeaders();
@@ -60,7 +65,12 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService{
 	@Override
 	public String getMarketChart(String coinId, int days) {
 		// TODO Auto-generated method stub
-		String url ="https://api.coingecko.com/api/v3/coins/"+coinId+"/market_chart?vs_currency=usd&per_page=10&days="+days;
+		String url = UriComponentsBuilder.fromHttpUrl("https://api.coingecko.com/api/v3/coins/{coinId}/market_chart")
+				.queryParam("vs_currency", "usd")
+				.queryParam("per_page", "10")
+				.queryParam("days", days)
+				.buildAndExpand(coinId)
+				.toUriString();
 		RestTemplate restTemplate = new RestTemplate();
 		try {
 			HttpHeaders headers= new HttpHeaders();
@@ -80,7 +90,9 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService{
 		// TODO Auto-generated method stub
 		//to check the actual url 
 		//https://api.coingecko.com/api/v3/coins/bitcoin
-		String url ="https://api.coingecko.com/api/v3/coins/"+coinId;
+		String url = UriComponentsBuilder.fromHttpUrl("https://api.coingecko.com/api/v3/coins/{coinId}")
+				.buildAndExpand(coinId)
+				.toUriString();
 		RestTemplate restTemplate = new RestTemplate();
 		try {
 			HttpHeaders headers= new HttpHeaders();
@@ -95,15 +107,15 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService{
 			JsonNode marketData = jsonNode.get("market_data");
 			coin.setCurrentPrice(marketData.get("current_price").get("usd").asDouble());
 			coin.setMarketCap(marketData.get("market_cap").get("usd").asLong());
-			coin.setMarketCapRank(marketData.get("market_cap_rank").get("usd").asInt());
+			coin.setMarketCapRank(marketData.get("market_cap_rank").asInt());
 			coin.setTotalVolume(marketData.get("total_volume").get("usd").asLong());
 			coin.setHigh24h(marketData.get("high_24h").get("usd").asDouble());
 			coin.setLow24h(marketData.get("low_24h").get("usd").asDouble());
 			coin.setPriceChange24h(marketData.get("price_change_24h").get("usd").asDouble());
 			coin.setPriceChange24h(marketData.get("price_change_24h").get("usd").asDouble());
 			coin.setMarketCapChange24h(marketData.get("market_cap_change_24h").asLong());
-			coin.setMarketCapChangePercentage24h(marketData.get("market_cap_change_percentage_24h").asLong());
-			coin.setTotalSupply(marketData.get("total_supply").get("usd").asLong());
+			coin.setMarketCapChangePercentage24h(marketData.get("market_cap_change_percentage_24h").asDouble());
+			coin.setTotalSupply(marketData.get("total_supply").asLong());
 			cryptoCurrencyRepository.save(coin);
 			return response.getBody();
 			
@@ -127,7 +139,9 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService{
 	@Override
 	public String searchCoin(String keyword) {
 		// TODO Auto-generated method stub
-		String url ="https://api.coingecko.com/api/v3/search?query="+keyword;
+		String url = UriComponentsBuilder.fromHttpUrl("https://api.coingecko.com/api/v3/search")
+				.queryParam("query", keyword)
+				.toUriString();
 		RestTemplate restTemplate = new RestTemplate();
 		try {
 			HttpHeaders headers= new HttpHeaders();
@@ -145,7 +159,11 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService{
 	@Override
 	public String getTopFiftyCoinByMarketCapRank() {
 		// TODO Auto-generated method stub
-		String url ="https://api.coingecko.com/api/v3/coins/markets/vs_currency=usd&per_page=50&page=1";
+		String url = UriComponentsBuilder.fromHttpUrl("https://api.coingecko.com/api/v3/coins/markets")
+				.queryParam("vs_currency", "usd")
+				.queryParam("per_page", "50")
+				.queryParam("page", "1")
+				.toUriString();
 		RestTemplate restTemplate = new RestTemplate();
 		try {
 			HttpHeaders headers= new HttpHeaders();
