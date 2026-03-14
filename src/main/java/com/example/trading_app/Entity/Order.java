@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
+@Table(name = "trading_order")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

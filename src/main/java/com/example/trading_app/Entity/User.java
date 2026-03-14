@@ -3,15 +3,12 @@ package com.example.trading_app.Entity;
 import com.example.trading_app.domain.USER_ROLE;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
 @Data
+@Table(name = "trading_user")
 public class User {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)

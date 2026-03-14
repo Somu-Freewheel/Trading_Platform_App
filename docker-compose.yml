@@ -1,42 +1,46 @@
 services:
-  mysql-db:
-    image: mysql:8.0
-    container_name: mysql-container
+  postgres-db:
+    image: postgres:15
+    container_name: postgres-container
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: user123
-      MYSQL_DATABASE: trading_app
-      MYSQL_PASSWORD: user123
+      POSTGRES_DB: trading_app
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: user123
     ports:
-      - "3307:3306"
+      - "5432:5432"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - postgres-data:/var/lib/postgresql/data
     networks:
       - trading-network
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin-container
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin-container
     restart: always
     environment:
-      PMA_HOST: mysql-db
-      MYSQL_ROOT_PASSWORD: user123
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
     ports:
       - "8081:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
     networks:
       - trading-network
+    depends_on:
+      - postgres-db
 
   trading-app:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: trading-api
-    restart: always
+    restart: no
     depends_on:
-      - mysql-db
+      - postgres-db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/trading_app
-      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/trading_app
+      SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: user123
     ports:
       - "8080:8080"
@@ -44,7 +48,8 @@ services:
       - trading-network
 
 volumes:
-  mysql-data:
+  postgres-data:
+  pgadmin-data:
 
 networks:
   trading-network:
