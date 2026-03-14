@@ -100,22 +100,55 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService{
 			ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 			JsonNode jsonNode = objectMapper.readTree(response.getBody());
 			Cryptocurrency coin = new Cryptocurrency();
-			coin.setId(jsonNode.get("id").asText());
-			coin.setName(jsonNode.get("name").asText());
-			coin.setSymbol(jsonNode.get("symbol").asText());
-			coin.setImage(jsonNode.get("image").get("large").asText());
+
+			// Safe field extraction with null checks
+			if (jsonNode.has("id") && !jsonNode.get("id").isNull()) {
+				coin.setId(jsonNode.get("id").asText());
+			}
+			if (jsonNode.has("name") && !jsonNode.get("name").isNull()) {
+				coin.setName(jsonNode.get("name").asText());
+			}
+			if (jsonNode.has("symbol") && !jsonNode.get("symbol").isNull()) {
+				coin.setSymbol(jsonNode.get("symbol").asText());
+			}
+			if (jsonNode.has("image") && jsonNode.get("image").has("large") && !jsonNode.get("image").get("large").isNull()) {
+				coin.setImage(jsonNode.get("image").get("large").asText());
+			}
+
 			JsonNode marketData = jsonNode.get("market_data");
-			coin.setCurrentPrice(marketData.get("current_price").get("usd").asDouble());
-			coin.setMarketCap(marketData.get("market_cap").get("usd").asLong());
-			coin.setMarketCapRank(marketData.get("market_cap_rank").asInt());
-			coin.setTotalVolume(marketData.get("total_volume").get("usd").asLong());
-			coin.setHigh24h(marketData.get("high_24h").get("usd").asDouble());
-			coin.setLow24h(marketData.get("low_24h").get("usd").asDouble());
-			coin.setPriceChange24h(marketData.get("price_change_24h").get("usd").asDouble());
-			coin.setPriceChange24h(marketData.get("price_change_24h").get("usd").asDouble());
-			coin.setMarketCapChange24h(marketData.get("market_cap_change_24h").asLong());
-			coin.setMarketCapChangePercentage24h(marketData.get("market_cap_change_percentage_24h").asDouble());
-			coin.setTotalSupply(marketData.get("total_supply").asLong());
+			if (marketData != null && !marketData.isNull()) {
+				if (marketData.has("current_price") && marketData.get("current_price").has("usd") && !marketData.get("current_price").get("usd").isNull()) {
+					coin.setCurrentPrice(marketData.get("current_price").get("usd").asDouble());
+				}
+				if (marketData.has("market_cap") && marketData.get("market_cap").has("usd") && !marketData.get("market_cap").get("usd").isNull()) {
+					coin.setMarketCap(marketData.get("market_cap").get("usd").asLong());
+				}
+				if (marketData.has("market_cap_rank") && !marketData.get("market_cap_rank").isNull()) {
+					coin.setMarketCapRank(marketData.get("market_cap_rank").asInt());
+				}
+				if (marketData.has("total_volume") && marketData.get("total_volume").has("usd") && !marketData.get("total_volume").get("usd").isNull()) {
+					coin.setTotalVolume(marketData.get("total_volume").get("usd").asLong());
+				}
+				if (marketData.has("high_24h") && marketData.get("high_24h").has("usd") && !marketData.get("high_24h").get("usd").isNull()) {
+					coin.setHigh24h(marketData.get("high_24h").get("usd").asDouble());
+				}
+				if (marketData.has("low_24h") && marketData.get("low_24h").has("usd") && !marketData.get("low_24h").get("usd").isNull()) {
+					coin.setLow24h(marketData.get("low_24h").get("usd").asDouble());
+				}
+				if (marketData.has("price_change_24h") && marketData.get("price_change_24h").has("usd") && !marketData.get("price_change_24h").get("usd").isNull()) {
+					coin.setPriceChange24h(marketData.get("price_change_24h").get("usd").asDouble());
+				}
+				if (marketData.has("market_cap_change_24h") && !marketData.get("market_cap_change_24h").isNull()) {
+					coin.setMarketCapChange24h(marketData.get("market_cap_change_24h").asLong());
+				}
+				if (marketData.has("market_cap_change_percentage_24h") && !marketData.get("market_cap_change_percentage_24h").isNull()) {
+					coin.setMarketCapChangePercentage24h(marketData.get("market_cap_change_percentage_24h").asDouble());
+				}
+				if (marketData.has("total_supply") && !marketData.get("total_supply").isNull()) {
+					coin.setTotalSupply(marketData.get("total_supply").asLong());
+				}
+			}
+
 			cryptoCurrencyRepository.save(coin);
 			return response.getBody();
 			
