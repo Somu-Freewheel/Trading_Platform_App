@@ -1,0 +1,17 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "trading_db",
+      "Group": "Servers",
+      "Host": "postgres-db",
+      "Port": 5432,
+      "MaintenanceDB": "trading_app",
+      "Username": "postgres",
+      "Password": "user123",
+      "SSLMode": "prefer",
+      "Shared": false,
+      "Shared": false
+    }
+  }
+}
+
