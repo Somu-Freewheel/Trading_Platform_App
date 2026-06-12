@@ -65,5 +65,17 @@ public class WalletController {
         return new ResponseEntity<>(wallet,HttpStatus.ACCEPTED);
     }
 
+    // Test endpoint for adding balance directly (for testing only)
+    @PostMapping("/test/add-balance")
+    public ResponseEntity<Wallet>addBalanceForTesting(@RequestHeader("Authorization")String jwt,
+                                                      @RequestBody WalletTransaction req) throws Exception {
+        User user = userService.findUserProfileByJwt(jwt);
+        System.out.println("User: " + user.getId() + ", Amount: " + req.getAmount());
+        Wallet wallet = walletService.getUserWallet(user);
+        System.out.println("Wallet before: " + wallet.getBalance());
+        wallet = walletService.addBalance(wallet, req.getAmount());
+        System.out.println("Wallet after: " + wallet.getBalance());
+        return new ResponseEntity<>(wallet, HttpStatus.OK);
+    }
 
 }

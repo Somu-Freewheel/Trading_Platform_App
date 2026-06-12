@@ -1,6 +1,7 @@
 package com.example.trading_app.service;
 import com.example.trading_app.Entity.PaymentOrder;
 import com.example.trading_app.Entity.User;
+import com.example.trading_app.Entity.Wallet;
 import com.example.trading_app.domain.PaymentMethod;
 import com.example.trading_app.domain.PaymentOrderStatus;
 import com.example.trading_app.repository.PaymentOrderRepository;
@@ -17,6 +18,9 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 
 @Service
 public class PaymentServiceImpl implements PaymentService{
@@ -25,6 +29,9 @@ public class PaymentServiceImpl implements PaymentService{
     public PaymentServiceImpl(PaymentOrderRepository paymentOrderRepository) {
         this.paymentOrderRepository = paymentOrderRepository;
     }
+    @Autowired
+    private WalletService walletService;
+
     @Value("${stripe.api.key}")
     private String stripeSecretKey;
     @Value("${razorpay.api.key}")
@@ -32,11 +39,19 @@ public class PaymentServiceImpl implements PaymentService{
     @Value("${stripe.api.secret}")
     private String razorPaySecretApiKey;
     @Override
+    @Transactional
     public PaymentOrder createOrder(User user, Long amount, PaymentMethod paymentMethod) {
+        // VALIDATE wallet balance FIRST
+        Wallet wallet = walletService.findWalletById(user.getId());
+        if (wallet.getBalance().compareTo(BigDecimal.valueOf(amount)) < 0) {
+            throw new RuntimeException("Insufficient funds for this transaction");
+        }
+
         PaymentOrder paymentOrder = new PaymentOrder();
         paymentOrder.setUser(user);
         paymentOrder.setAmount(amount);
         paymentOrder.setPaymentMethod(paymentMethod);
+        paymentOrder.setStatus(PaymentOrderStatus.PENDING);
         return paymentOrderRepository.save(paymentOrder);
     }
 
