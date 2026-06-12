@@ -4,6 +4,7 @@ import com.example.trading_app.Entity.User;
 import com.example.trading_app.Entity.Wallet;
 import com.example.trading_app.domain.OrderType;
 import com.example.trading_app.repository.WalletServiceRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,13 +18,33 @@ public class WalletServiceImpl implements WalletService{
     private WalletServiceRepository walletServiceRepository;
 
     @Override
+    @Transactional
     public Wallet getUserWallet(User user) {
+        System.out.println("===== WALLET SERVICE METHOD EXECUTED =====");
+
         validateUser(user);
-        Wallet wallet = walletServiceRepository.findByUserId(user.getId());
-        if(wallet==null){
+
+        Wallet wallet = walletServiceRepository.findByUser_Id(user.getId());
+
+        if (wallet == null) {
+
+            System.out.println("Wallet not found. Creating new wallet.");
+
             wallet = new Wallet();
             wallet.setUser(user);
+            wallet.setBalance(BigDecimal.ZERO);
+
+            wallet = walletServiceRepository.save(wallet);
+
+            System.out.println("Wallet saved: " + wallet);
+
+        } else if (wallet.getBalance() == null) {
+
+            wallet.setBalance(BigDecimal.ZERO);
+            wallet = walletServiceRepository.save(wallet);
+
         }
+
         return wallet;
     }
 
@@ -33,12 +54,12 @@ public class WalletServiceImpl implements WalletService{
         BigDecimal balance = wallet.getBalance();
         BigDecimal newBalance = balance.add(BigDecimal.valueOf(money));
         wallet.setBalance(newBalance );
-        return wallet;
+        return walletServiceRepository.save(wallet);
     }
 
     @Override
     public Wallet findWalletById(Long id) {
-        Optional<Wallet>wallet = Optional.ofNullable(walletServiceRepository.findByUserId(id));
+        Optional<Wallet>wallet = Optional.ofNullable(walletServiceRepository.findByUser_Id(id));
         if(wallet.isPresent()){
             return  wallet.get();
         }
@@ -73,10 +94,10 @@ public class WalletServiceImpl implements WalletService{
     public Wallet payOrderPayment(Order order, User user) {
         Wallet wallet = getUserWallet(user);
         if(order.getOrderType().equals(OrderType.BUY)){
-            BigDecimal newBalance = wallet.getBalance().subtract(order.getPrice());
-            if(newBalance.compareTo(order.getPrice())<0){
+            if(wallet.getBalance().compareTo(order.getPrice()) < 0){
                 throw new RuntimeException("Insufficient funds for this transaction");
             }
+            BigDecimal newBalance = wallet.getBalance().subtract(order.getPrice());
             wallet.setBalance(newBalance);
         }else{
             BigDecimal newBalance = wallet.getBalance().subtract(order.getPrice());

@@ -43,7 +43,7 @@ public class WalletServiceImplTest {
         Long amount = 200L;
 
         // Mock repository response for senderWallet
-        when(walletServiceRepository.findByUserId(sender.getId())).thenReturn(senderWallet);
+        when(walletServiceRepository.findByUser_Id(sender.getId())).thenReturn(senderWallet);
         when(walletServiceRepository.save(any(Wallet.class))).thenAnswer(i -> i.getArguments()[0]);
 
         // When
@@ -75,7 +75,7 @@ public class WalletServiceImplTest {
         Long amount =200L;
 
         // Mock repository response for senderWallet
-        when(walletServiceRepository.findByUserId(sender.getId())).thenReturn(senderWallet);
+        when(walletServiceRepository.findByUser_Id(sender.getId())).thenReturn(senderWallet);
 
         // When & Then
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {

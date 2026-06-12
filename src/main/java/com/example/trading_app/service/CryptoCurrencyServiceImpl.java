@@ -1,9 +1,6 @@
 package com.example.trading_app.service;
-
-
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,7 +11,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import com.example.trading_app.Entity.Cryptocurrency;
 import com.example.trading_app.repository.CryptoCurrencyRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
