@@ -1,4 +1,6 @@
 # All about this service 
+## Service Overview
+The Trading Platform App is a robust, Spring Boot-based RESTful service designed to facilitate secure cryptocurrency and asset trading operations. It leverages JWT authentication for secure API access, PostgreSQL for reliable data persistence, and Docker containerization for seamless deployment across multiple environments. The service supports comprehensive wallet management, real-time asset tracking, and transaction processing with role-based access control. Built with scalability and maintainability in mind, it provides a foundation for modern fintech applications with production-ready CI/CD pipeline integration through Jenkins.
 
 ## How to run the service
 First, make sure your Spring Boot application is running:
@@ -9,6 +11,10 @@ cd 'D:\download files\projects\trading_website\trading_app\trading_app'; .\mvnw 
 
 # Docker containers up
 docker-compose up --build
+
+# For Jenkins conatiner - Access Jenkins at http://localhost:8082
+docker exec jenkins-container cat /var/jenkins_home/secrets/initialAdminPassword
+
 ```
 Your API should be available at: `http://localhost:8080`
 
