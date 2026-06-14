@@ -21,13 +21,57 @@ Your API should be available at: `http://localhost:8080`
 ---
 ## **Environment Setup**
 
-Your `application.properties` shows:
-- Server Port: **8080**
-- Database: **MySQL** at `jdbc-mysql://mysql-db:3306/trading_app`
-- Username: `root`
-- Password: `user123`
+The application supports three environments: **DEV**, **STAGE**, and **PROD**.
+### DEV Environment
+| Service | Host Port | Container Port |
+|----------|-----------|---------------|
+| Trading App | 8080 | 8080 |
+| PostgreSQL | 5432 | 5432 |
+| PgAdmin | 8081 | 80 |
 
-Make sure MySQL is accessible before testing.
+**Database Configuration**
+```properties
+spring.profiles.active=dev
+spring.datasource.url=jdbc:postgresql://postgres-db:5432/trading_app_dev
+spring.datasource.username=postgres
+spring.datasource.password=<DEV_DB_PASSWORD>
+
+```
+### STG Environment
+| Service | Host Port | Container Port |
+|----------|-----------|---------------|
+| Trading App | 8081      | 8080 |
+| PostgreSQL | 5433      | 5432 |
+| PgAdmin | 8083      | 80 |
+
+**Database Configuration**
+```properties
+spring.profiles.active=stage
+spring.datasource.url=jdbc:postgresql://postgres-db:5432/trading_app_stage
+spring.datasource.username=postgres
+spring.datasource.password=<STAGE_DB_PASSWORD>
+```
+### PROD Environment
+| Service | Host Port | Container Port |
+|----------|-----------|---------------|
+| Trading App | 8082      | 8080 |
+| PostgreSQL | 5434      | 5432 |
+| PgAdmin | 8083      | 80 |
+
+**Database Configuration**
+```properties
+spring.profiles.active=prod
+spring.datasource.url=jdbc:postgresql://postgres-db:5432/trading_app_prod
+spring.datasource.username=postgres
+spring.datasource.password=${DB_PASSWORD}
+```
+
+## **Docker Compose Files**
+- `docker-compose.yml`: For development environment
+- `docker-compose.stage.yml`: For staging environment
+- `docker-compose.prod.yml`: For production environment
+````
+
 
 # **Tips for Postman**
 
