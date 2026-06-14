@@ -47,6 +47,9 @@ services:
     networks:
       - trading-network
   jenkins:
+    build:
+      context: .
+      dockerfile: jenkins.Dockerfile
     image : jenkins/jenkins:lts
     container_name: jenkins-container
     restart: unless-stopped
