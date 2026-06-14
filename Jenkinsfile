@@ -33,21 +33,21 @@ pipeline {
 
         stage('Deploy DEV') {
             steps {
-                sh 'docker compose -f docker-compose.yml up -d'
+                sh 'docker-compose -f docker-compose.yml up -d'
             }
         }
 
         stage('Deploy STAGE') {
             steps {
                 input 'Deploy to STAGE?'
-                sh 'docker compose -f docker-compose-stage.yml up -d'
+                sh 'docker-compose -f docker-compose-stage.yml up -d'
             }
         }
 
         stage('Deploy PROD') {
             steps {
                 input 'Deploy to PROD?'
-                sh 'docker compose -f docker-compose-prod.yml up -d'
+                sh 'docker-compose -f docker-compose-prod.yml up -d'
             }
         }
     }
