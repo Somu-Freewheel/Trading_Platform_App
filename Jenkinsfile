@@ -22,25 +22,19 @@ pipeline {
         stage('Docker Build') {
             steps {
                 script{
-                    sh 'docker build -t ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} .'
-                    sh 'docker tag ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} ${REGISTRY}/${IMAGE_NAME}:latest'
+                    sh "docker build -t ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} ."
+                    sh "docker tag ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} ${REGISTRY}/${IMAGE_NAME}:latest"
                 }
             }
         }
 
         stage('Deploy DEV') {
-            when {
-                    branch 'develop'
-            }
             steps {
-                sh 'docker compose -f docker-compose-dev.yml up -d'
+                sh 'docker compose -f docker-compose.yml up -d'
             }
         }
 
         stage('Deploy STAGE') {
-            when {
-                    branch 'staging'
-            }
             steps {
                 input 'Deploy to STAGE?'
                 sh 'docker compose -f docker-compose-stage.yml up -d'
@@ -48,25 +42,21 @@ pipeline {
         }
 
         stage('Deploy PROD') {
-            when {
-                    branch 'main'
-            }
             steps {
                 input 'Deploy to PROD?'
                 sh 'docker compose -f docker-compose-prod.yml up -d'
             }
         }
-        post {
-            always {
-                 cleanWs()
-            }
-            failure {
-                 echo 'Pipeline failed - Notify team'
-            }
-            success {
-                 echo 'Pipeline succeeded!'
-            }
+    }
+    post {
+        always {
+            cleanWs()
         }
-
+        failure {
+            echo 'Pipeline failed - Notify team'
+        }
+        success {
+            echo 'Pipeline succeeded!'
+        }
     }
 }
