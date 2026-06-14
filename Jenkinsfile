@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools {
+            maven 'Maven3'
+    }
     environment {
         REGISTRY = 'your-docker-registry'
         IMAGE_NAME = 'trading-app'
