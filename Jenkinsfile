@@ -33,7 +33,7 @@ pipeline {
 
         stage('Deploy DEV') {
             steps {
-                sh 'docker-compose -f docker-compose.yml up -d'
+                sh 'docker-compose -f docker-compose.yml up -d --no-recreate postgres-db pgadmin trading-app'
             }
         }
 
