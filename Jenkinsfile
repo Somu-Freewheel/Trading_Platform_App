@@ -33,6 +33,7 @@ pipeline {
 
         stage('Deploy DEV') {
             steps {
+                sh 'docker rm -f trading-api || true'
                 sh 'docker-compose -f docker-compose.yml up -d --force-recreate --no-deps trading-app'
             }
         }
