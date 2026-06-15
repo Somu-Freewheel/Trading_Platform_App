@@ -33,8 +33,7 @@ pipeline {
 
         stage('Deploy DEV') {
             steps {
-                sh 'docker-compose -f docker-compose.yml down'
-                sh 'docker-compose -f docker-compose.yml up -d'
+                sh 'docker-compose -f docker-compose.yml up -d --force-recreate --no-deps trading-app'
             }
         }
 
