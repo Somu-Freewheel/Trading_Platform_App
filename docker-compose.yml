@@ -46,10 +46,27 @@ services:
       - "8080:8080"
     networks:
       - trading-network
+  jenkins:
+    build:
+      context: .
+      dockerfile: jenkins.Dockerfile
+    image : jenkins/jenkins:lts
+    container_name: jenkins-container
+    restart: unless-stopped
+    ports:
+        - "8082:8080"
+        - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    user: root
+    networks:
+        - trading-network
 
 volumes:
   postgres-data:
   pgadmin-data:
+  jenkins_home:
 
 networks:
   trading-network:
