@@ -30,6 +30,23 @@ services:
     depends_on:
       - postgres-db
 
+  redis:
+    image: redis:7-alpine
+    container_name: redis-container
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - trading-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   trading-app:
     build:
       context: .
@@ -38,10 +55,14 @@ services:
     restart: no
     depends_on:
       - postgres-db
+      - redis
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/trading_app
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: user123
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_TIMEOUT: 60000
     ports:
       - "8080:8080"
     networks:
@@ -50,6 +71,7 @@ services:
 volumes:
   postgres-data:
   pgadmin-data:
+  redis-data:
 
 networks:
   trading-network:
