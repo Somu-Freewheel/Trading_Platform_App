@@ -7,6 +7,9 @@ import com.example.trading_app.repository.OrderItemRepository;
 import com.example.trading_app.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -28,6 +31,7 @@ public class OrderServiceImpl implements OrderService{
     private AssetService assetService;
 
     @Override
+    @CacheEvict(value = "orders", key = "#user.id")
     public Order createOrder(User user, OrderItem orderItem, OrderType orderType) {
         double price = orderItem.getCoin().getCurrentPrice()*orderItem.getQuantity();
         Order order = new Order();
@@ -41,11 +45,13 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
+    @Cacheable(value = "orders", key = "#orderId")
     public Order getOrderId(Long orderId) {
         return orderRepository.findById(orderId).orElseThrow(()->new RuntimeException("order not found"));
     }
 
     @Override
+    @Cacheable(value = "orders", key = "#userId + '_' + #orderType + '_' + #assetSymbol")
     public List<Order> getAllOrdersOfUser(Long userId, OrderType orderType, String assetSymbol) {
         return orderRepository.findByUserId(userId);
     }
@@ -60,6 +66,7 @@ public class OrderServiceImpl implements OrderService{
     }
     //Buying the asset
     @Transactional
+    @Caching(evict = {@CacheEvict(value = "orders", key = "#user.id")})
     public Order buyAsset(Cryptocurrency coin , double quantity, User user){
         if(quantity<=0){
             throw new RuntimeException("quantity should be greater than zero");
@@ -85,6 +92,7 @@ public class OrderServiceImpl implements OrderService{
     }
     //Selling the asset
     @Transactional
+    @Caching(evict = {@CacheEvict(value = "orders", key = "#user.id")})
     public Order sellAsset(Cryptocurrency coin , double quantity, User user){
         if(quantity<=0){
             throw new RuntimeException("quantity should be greater than zero");
@@ -113,6 +121,7 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
+    @Caching(evict = {@CacheEvict(value = "orders", key = "#user.id")})
     public Order processOrder(Cryptocurrency coin, double quantity, OrderType orderType, User user) {
         if(orderType.equals(OrderType.BUY)){
             return buyAsset(coin ,quantity,user);
