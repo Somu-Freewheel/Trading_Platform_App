@@ -47,6 +47,18 @@ services:
       timeout: 3s
       retries: 5
 
+  redis-insight:
+    image: redis/redisinsight:latest
+    container_name: redis-insight
+    restart: always
+    ports:
+      - "5540:5540"
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - trading-network
+
   trading-app:
     build:
       context: .
