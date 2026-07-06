@@ -20,7 +20,10 @@ public class User {
 	@Embedded
 	private TwoFactorAuth twoFactorAuth=new TwoFactorAuth();
 	private USER_ROLE role=USER_ROLE.ROLE_CUSTOMER;
-	
-	
-
+	// Convenience accessor for code that expects a getIsEnabled() method
+	// Returns whether two-factor auth is enabled for this user (false if TFA not set)
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	public boolean getIsEnabled() {
+		return this.twoFactorAuth != null && this.twoFactorAuth.isEnabled();
+	}
 }
