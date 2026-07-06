@@ -5,7 +5,7 @@ First, make sure your Spring Boot application is running:
 ```bash
 # If using Maven - The command to build the code 
 cd "D:\download files\projects\trading_app"; .\mvnw.cmd clean package -DskipTests
-cd 'D:\download files\projects\trading_website\trading_app\trading_app'; .\mvnw clean compile
+cd 'D:\download files\projects\trading_app'; .\mvnw clean compile
 
 # Docker containers up
 docker-compose up --build
