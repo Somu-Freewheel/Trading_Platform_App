@@ -38,11 +38,11 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
-            -t ghcr.io/${{ secrets.GHCR_USERNAME }}/trading-app:${{ github.sha }} .
+            -t ghcr.io/${{ secrets.GHCR_OWNER }}/trading-app:${{ github.sha }} .
 
       - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/trading-app:${{ github.sha }}
+          docker push ghcr.io/${{ secrets.GHCR_OWNER }}/trading-app:${{ github.sha }}
 
 
 
