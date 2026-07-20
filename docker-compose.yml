@@ -4,7 +4,7 @@ services:
     container_name: postgres-container
     restart: always
     environment:
-      POSTGRES_DB: trading_app
+      POSTGRES_DB: trading_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: user123
     ports:
