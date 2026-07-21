@@ -7,6 +7,9 @@ import com.example.trading_app.repository.WalletServiceRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -19,6 +22,7 @@ public class WalletServiceImpl implements WalletService{
 
     @Override
     @Transactional
+    @Cacheable(value = "wallet", key = "#user.id")
     public Wallet getUserWallet(User user) {
         System.out.println("===== WALLET SERVICE METHOD EXECUTED =====");
 
@@ -50,6 +54,7 @@ public class WalletServiceImpl implements WalletService{
 
 
     @Override
+    @CacheEvict(value = "wallet", key = "#wallet.user.id")
     public Wallet addBalance(Wallet wallet, Long money) {
         BigDecimal balance = wallet.getBalance();
         BigDecimal newBalance = balance.add(BigDecimal.valueOf(money));
@@ -58,6 +63,7 @@ public class WalletServiceImpl implements WalletService{
     }
 
     @Override
+    @Cacheable(value = "wallet", key = "#id")
     public Wallet findWalletById(Long id) {
         Optional<Wallet>wallet = Optional.ofNullable(walletServiceRepository.findByUser_Id(id));
         if(wallet.isPresent()){
@@ -67,6 +73,10 @@ public class WalletServiceImpl implements WalletService{
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "wallet", key = "#sender.id"),
+            @CacheEvict(value = "wallet", key = "#receiverWallet.user.id")
+    })
     public Wallet walletToWalletTransfer(User sender, Wallet receiverWallet, Long amount) {
         validateUser(sender);
         Wallet senderWallet = getUserWallet(sender);
@@ -91,6 +101,7 @@ public class WalletServiceImpl implements WalletService{
     }
 
     @Override
+    @CacheEvict(value = "wallet", key = "#user.id")
     public Wallet payOrderPayment(Order order, User user) {
         Wallet wallet = getUserWallet(user);
         if(order.getOrderType().equals(OrderType.BUY)){
