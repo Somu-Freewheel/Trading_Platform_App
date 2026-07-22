@@ -13,6 +13,7 @@ jobs:
     permissions:
       contents: write
       packages: write
+      pull-requests: write
 
     steps:
       - name: Checkout Source Code
@@ -44,16 +45,40 @@ jobs:
         run: |
           docker push ghcr.io/${{ secrets.GHCR_OWNER }}/trading-app:${{ github.sha }}
 
-      - name: Update Kubernetes manifest
+      - name: Checkout Kubernetes Repository
+        uses: actions/checkout@v4
+        with:
+          repository: Somu-Freewheel/Trading_Platform_K8S
+          token: ${{ secrets.K8S_REPO_TOKEN }}
+          path: Trading_Platform_K8S
+
+      - name: Update Kubernetes Image Tag
         run: |
-          git clone https://${{ secrets.K8S_REPO_TOKEN }}@github.com/Somu-Freewheel/Trading_Platform_K8S.git
-          cd Trading_Platform_K8S
-          sed -i "s#ghcr.io/somu-freewheel/trading-app:.*#ghcr.io/somu-freewheel/trading-app:${{ github.sha }}#" trading-app/deployment.yaml
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add trading-app/deployment.yaml
-          git commit -m "Update trading-app image to ${{ github.sha }}"
-          git push origin main
+            cd Trading_Platform_K8S
+          
+            sed -i \
+            "s#ghcr.io/somu-freewheel/trading-app:.*#ghcr.io/${{ secrets.GHCR_OWNER }}/trading-app:${{ github.sha }}#" \
+            trading-app/deployment.yaml
+
+      - name: Create Kubernetes Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+            token: ${{ secrets.K8S_REPO_TOKEN }}
+            path: Trading_Platform_K8S
+            branch: update-trading-app-${{ github.sha }}
+            base: main
+            title: "Update trading-app image to ${{ github.sha }}"
+            commit-message: "Update trading-app image to ${{ github.sha }}"
+            body: |
+              ## Automated Kubernetes image update
+            Application repository:
+              Trading_Platform_App
+            New Docker image:
+
+              ghcr.io/${{ secrets.GHCR_OWNER }}/trading-app:${{ github.sha }}
+              This PR updates the Kubernetes deployment image tag.
+
+
 
 
 
