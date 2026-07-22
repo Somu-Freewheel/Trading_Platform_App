@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -43,6 +43,17 @@ jobs:
       - name: Push Docker image
         run: |
           docker push ghcr.io/${{ secrets.GHCR_OWNER }}/trading-app:${{ github.sha }}
+
+      - name: Update Kubernetes manifest
+        run: |
+          git clone https://${{ secrets.K8S_REPO_TOKEN }}@github.com/Somu-Freewheel/Trading_Platform_K8S.git
+          cd Trading_Platform_K8S
+          sed -i "s#ghcr.io/somu-freewheel/trading-app:.*#ghcr.io/somu-freewheel/trading-app:${{ github.sha }}#" trading-app/deployment.yaml
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add trading-app/deployment.yaml
+          git commit -m "Update trading-app image to ${{ github.sha }}"
+          git push origin main
 
 
 
