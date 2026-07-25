@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+
+  postgres-db:
+    image: postgres:15
+    container_name: postgres-prod
+    restart: always
+
+    environment:
+      POSTGRES_DB: trading_app_prod
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+    ports:
+      - "5434:5432"
+
+    volumes:
+      - postgres-prod-data:/var/lib/postgresql/data
+
+    networks:
+      - trading-network-prod
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  trading-app:
+    image: trading-app:${IMAGE_TAG}
+
+    container_name: trading-api-prod
+
+    restart: always
+
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/trading_app_prod
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+
+      JAVA_OPTS: "-Xms512m -Xmx1024m"
+
+    ports:
+      - "8082:8080"
+
+    networks:
+      - trading-network-prod
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  postgres-prod-data:
+
+networks:
+  trading-network-prod:
+    driver: bridge

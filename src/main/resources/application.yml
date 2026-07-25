@@ -1,0 +1,9 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  profiles:
+    active: dev
+
+server:
+  port: 8080

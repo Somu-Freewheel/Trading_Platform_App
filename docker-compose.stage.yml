@@ -1,0 +1,64 @@
+version: '3.8'
+services:
+  postgres-db:
+    image: postgres:15
+    container_name: postgres-stage
+    restart: always
+    environment:
+      POSTGRES_DB: trading_app_stage
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: stage_secure_pass
+    ports:
+        - "5433:5432"
+    volumes:
+      - postgres-stage-data:/var/lib/postgresql/data
+    networks:
+      - trading-network-stage
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin-stage
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8083:80"
+    volumes:
+      - pgadmin-stage-data:/var/lib/pgadmin
+    networks:
+      - trading-network-stage
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+
+  trading-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: trading-api-stage
+    restart: always
+    depends_on:
+        - postgres-db
+    environment:
+      SPRING_PROFILES_ACTIVE: stage
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5433/trading_app_stage
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: stage_secure_pass
+    ports:
+      - "8081:8080"
+    networks:
+      - trading-network-stage
+
+volumes:
+  postgres-stage-data:
+  pgadmin-stage-data:
+
+networks:
+  trading-network-stage:
+
