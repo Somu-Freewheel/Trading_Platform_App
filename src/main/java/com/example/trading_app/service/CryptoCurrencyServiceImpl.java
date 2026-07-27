@@ -2,6 +2,7 @@ package com.example.trading_app.service;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -13,9 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.example.trading_app.Entity.Cryptocurrency;
 import com.example.trading_app.repository.CryptoCurrencyRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,6 +32,7 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService{
 	}
 
 	@Override
+	@Cacheable(value = "coinList", key = "#page")
 	public List<Cryptocurrency> getCoinList(int page) {
 		// TODO Auto-generated method stub
 		String url = UriComponentsBuilder.fromHttpUrl("https://api.coingecko.com/api/v3/coins/markets")
@@ -59,6 +59,7 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService{
 	}
 
 	@Override
+	@Cacheable(value = "marketData", key = "#coinId + '_' + #days")
 	public String getMarketChart(String coinId, int days) {
 		// TODO Auto-generated method stub
 		String url = UriComponentsBuilder.fromHttpUrl("https://api.coingecko.com/api/v3/coins/{coinId}/market_chart")
@@ -82,6 +83,7 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService{
 	}
 
 	@Override
+	@Cacheable(value = "coinDetails", key = "#coinId")
 	public String getCoinDetails(String coinId) {
 		// TODO Auto-generated method stub
 		//to check the actual url 
@@ -166,6 +168,7 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService{
 	}
 
 	@Override
+	@Cacheable(value = "searchResults", key = "#keyword")
 	public String searchCoin(String keyword) {
 		// TODO Auto-generated method stub
 		String url = UriComponentsBuilder.fromHttpUrl("https://api.coingecko.com/api/v3/search")
@@ -186,6 +189,7 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService{
 	}
 
 	@Override
+	@Cacheable(value = "coinList", key = "'top_fifty'")
 	public String getTopFiftyCoinByMarketCapRank() {
 		// TODO Auto-generated method stub
 		String url = UriComponentsBuilder.fromHttpUrl("https://api.coingecko.com/api/v3/coins/markets")
@@ -209,6 +213,7 @@ public class CryptoCurrencyServiceImpl implements CryptoCurrencyService{
 	}
 
 	@Override
+	@Cacheable(value = "coinList", key = "'trending'")
 	public String getTradingCoins() {
 		// TODO Auto-generated method stub
 		String url = UriComponentsBuilder.fromHttpUrl("https://api.coingecko.com/api/v3/search/trending")

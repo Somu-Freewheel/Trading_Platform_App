@@ -20,6 +20,7 @@ import com.example.trading_app.Entity.User;
 import com.example.trading_app.Utils.OtpUtils;
 import com.example.trading_app.config.JwtProvider;
 import com.example.trading_app.repository.UserRepository;
+import com.example.trading_app.service.UserService;
 import com.example.trading_app.response.AuthResponse;
 import com.example.trading_app.service.CustomUserDetailsService;
 import com.example.trading_app.service.TwoFactorOtpService;
@@ -31,7 +32,9 @@ public class AuthController {
 	private UserRepository userRepository;
 	
 	@Autowired
-    private JwtProvider jwtProvider;
+	private JwtProvider jwtProvider;
+	@Autowired
+	private UserService userService;
 	@Autowired
 	private TwoFactorOtpService twoFactorOtpService;
 	@Autowired
@@ -73,8 +76,8 @@ public class AuthController {
 		Authentication auth = authenticate(userName,password);
 		SecurityContextHolder.getContext().setAuthentication(auth);
 		String jwt=JwtProvider.generateToken(auth);
-		User authUser = userRepository.findByEmail(userName)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+		// Use UserService so the lookup goes through the @Cacheable method and populates Redis
+		User authUser = userService.findUserByEmail(userName);
 		if(user.getTwoFactorAuth().isEnabled()) {
 			AuthResponse authResponse=new AuthResponse();
 			authResponse.setMessage("Two Factor auth is Enabled");
