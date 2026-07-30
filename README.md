@@ -279,3 +279,40 @@ class UserRepo,WalletRepo,OrderRepo,PaymentRepo,CryptoRepo repo;
 class PostgreSQL,Redis db;
 class Kafka,Stripe,Razorpay,SMTP,Market,Worker,Notification ext;
 ```
+
+```mermaid
+flowchart TD
+
+User["👤 User"]
+
+User -->|"POST /auth/signup"| Signup["AuthController"]
+
+Signup --> Validate["Validate Request"]
+
+Validate --> Exists{"Email Exists?"}
+
+Exists -- No --> Save["Save User"]
+Save --> DB[(PostgreSQL)]
+
+Save --> GenerateOtp["Generate OTP"]
+
+GenerateOtp --> Redis[(Redis)]
+
+GenerateOtp --> Email["Email Service"]
+
+Email --> SMTP["SMTP Provider"]
+
+SMTP --> Verify["User Receives OTP"]
+
+Verify -->|"POST /auth/verify-otp"| VerifyController["AuthController"]
+
+VerifyController --> CheckOtp["Verify OTP"]
+
+CheckOtp --> Redis
+
+CheckOtp --> Jwt["Generate JWT"]
+
+Jwt --> Response["JWT Returned"]
+
+Response --> User
+```
