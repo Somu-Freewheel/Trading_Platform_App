@@ -1,6 +1,5 @@
 package com.example.trading_app.controller;
 import java.util.Optional;
-
 import com.example.trading_app.service.EmailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
