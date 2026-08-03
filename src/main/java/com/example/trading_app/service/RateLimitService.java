@@ -2,6 +2,7 @@ package com.example.trading_app.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
@@ -10,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 public class RateLimitService {
 
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private StringRedisTemplate redisTemplate;
 
     // Configuration constants
     private static final String RATE_LIMIT_PREFIX = "rate_limit:signin:";
@@ -26,24 +27,14 @@ public class RateLimitService {
         String key = RATE_LIMIT_PREFIX + identifier;
 
         // Get current attempt count
-        Object attempts = redisTemplate.opsForValue().get(key);
+        Long attempts = redisTemplate.opsForValue().increment(key);
 
-        if (attempts == null) {
+        if (attempts == null && attempts ==1) {
             // First attempt
-            redisTemplate.opsForValue().set(key, 1, WINDOW_SIZE_MINUTES, TimeUnit.MINUTES);
-            return true;
+            redisTemplate.expire(key, WINDOW_SIZE_MINUTES, TimeUnit.MINUTES);
         }
 
-        int currentAttempts = Integer.parseInt(attempts.toString());
-
-        // Check if exceeded max attempts
-        if (currentAttempts >= MAX_ATTEMPTS) {
-            return false;
-        }
-
-        // Increment attempts
-        redisTemplate.opsForValue().increment(key);
-        return true;
+        return attempts != null && attempts <= MAX_ATTEMPTS;
     }
 
     /**
@@ -53,13 +44,13 @@ public class RateLimitService {
      */
     public int getRemainingAttempts(String identifier) {
         String key = RATE_LIMIT_PREFIX + identifier;
-        Object attempts = redisTemplate.opsForValue().get(key);
+        String attempts = redisTemplate.opsForValue().get(key);
 
         if (attempts == null) {
             return MAX_ATTEMPTS;
         }
 
-        int currentAttempts = Integer.parseInt(attempts.toString());
+        int currentAttempts = Integer.parseInt(attempts);
         return Math.max(0, MAX_ATTEMPTS - currentAttempts);
     }
 
