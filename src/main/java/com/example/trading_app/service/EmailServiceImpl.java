@@ -12,6 +12,9 @@ import jakarta.mail.internet.MimeMessage;
 @Service
 public class EmailServiceImpl {
 	private JavaMailSender javaMailSender;
+	public EmailServiceImpl(JavaMailSender javaMailSender){
+		this.javaMailSender = javaMailSender;
+	}
 	public void sendVerificationOtpEmail(String email,String otp) throws MessagingException{
 		MimeMessage mimeMessage=javaMailSender.createMimeMessage();
 		MimeMessageHelper mimeMessageHelper=new MimeMessageHelper(mimeMessage,"utf-8");
