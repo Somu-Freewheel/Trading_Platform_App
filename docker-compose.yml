@@ -69,7 +69,7 @@ services:
       - postgres-db
       - redis
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/trading_app
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/trading_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: user123
       SPRING_REDIS_HOST: redis

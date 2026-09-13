@@ -19,7 +19,7 @@ public class EmailServiceImpl {
 		MimeMessage mimeMessage=javaMailSender.createMimeMessage();
 		MimeMessageHelper mimeMessageHelper=new MimeMessageHelper(mimeMessage,"utf-8");
 		String subject="Verify OTP";
-		String text="Your Verification code is OTP";
+		String text="Your Verification code is " + otp;
 		mimeMessageHelper.setSubject(subject);
 		mimeMessageHelper.setText(text);
 		mimeMessageHelper.setTo(email);
