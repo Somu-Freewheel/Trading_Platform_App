@@ -28,10 +28,11 @@ public class AppConfig {
 	}
 	private CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("*")); // Allow all origins
+		configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000")); // Specific origins
 		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		configuration.setAllowedHeaders(List.of("*"));
-		configuration.setAllowCredentials(true); // If you need cookies or authorization headers
+		configuration.setAllowCredentials(true);
+		configuration.setMaxAge(3600L);
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
